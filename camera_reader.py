@@ -1,4 +1,8 @@
 # -*- coding:utf-8 -*-
+'''
+opencv分类器参考文章 https://blog.csdn.net/u010402786/article/details/52261933
+'''
+
 import cv2
 
 from model_train import Model
@@ -11,29 +15,26 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
     # 读取dataset数据集下的子文件夹名称
     name_list = read_name_list(faceData_file_path)
-    cascade_path = "F:\Anaconda\Lib\site-packages\cv2\data\haarcascade_frontalface_default.xml"
     model = Model()
     model.load()
     while True:
-        _, frame = cap.read()
+        _, frame = cap.read()  # 获取摄像头图像
 
-        # グレースケール変換
-        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 图像灰度化
 
-        # カスケード分類器の特徴量を取得する
-        cascade = cv2.CascadeClassifier(cascade_path)
+        cascade_path = "cv2_data/haarcascade_frontalface_alt.xml"  # opencv人脸检测分类器 人脸检测器（Haar_1）
+        cascade = cv2.CascadeClassifier(cascade_path)  # 加载人脸检测分类器
 
-        # 物体認識（顔認識）の実行
+        # 检测到的人脸
         facerect = cascade.detectMultiScale(frame_gray, scaleFactor=1.2, minNeighbors=3, minSize=(10, 10))
         # facerect = cascade.detectMultiScale(frame_gray, scaleFactor=1.01, minNeighbors=3, minSize=(3, 3))
+
         if len(facerect) > 0:  # 检测到人脸
             print(name_list)
             print('face detected')
             color = (0, 0, 255)  # opencv B-G-R 红色
             for rect in facerect:
-                # 検出した顔を囲む矩形の作成
-                # cv2.rectangle(frame, tuple(rect[0:2]), tuple(rect[0:2] + rect[2:4]), color, thickness=2)
-
+                # 获取图像上人脸的左上角的x,y坐标，和人脸的宽和高
                 x, y = rect[0:2]
                 width, height = rect[2:4]
                 image = frame[y - 10: y + height, x: x + width]
@@ -47,13 +48,11 @@ if __name__ == '__main__':
                             cv2.FONT_HERSHEY_SIMPLEX, 1.2,
                             (0, 255, 0), 2)
         cv2.imshow('faceRecogniztion', frame)  # 显示图像
-        c = cv2.waitKey(10)
-        # 10msecキー入力待ち
-        k = cv2.waitKey(100)
-        # Escキーを押されたら終了
+        k = cv2.waitKey(10)  # 10ms内等待输入
+
         if k == 27:  # ESC(ASCII码为27),按下ESC后 cv2.waitKey(),停止
             break
 
-    # キャプチャを終了
+    # 释放摄像头
     cap.release()
     cv2.destroyAllWindows()

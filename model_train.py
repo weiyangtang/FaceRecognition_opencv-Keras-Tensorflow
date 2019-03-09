@@ -20,7 +20,8 @@ from keras.models import load_model
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import np_utils
-from sklearn.cross_validation import train_test_split
+# from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 from data_input import extract_data, resize_with_pad, IMAGE_SIZE, read_file
 
@@ -181,7 +182,10 @@ class Model(object):
         image = image.astype('float32')
         image /= 255  # 将图像矩阵转化到0-1之间
         result = self.model.predict_proba(image)
-        print(result)
+        max_index = np.argmax(result)  # 找出概率最高的
+        print('准确度为', result[0][max_index])
+        # if (result < 0.8):  # 获取识别的可靠性
+        #     return -1
         result = self.model.predict_classes(image)
 
         return result[0]
