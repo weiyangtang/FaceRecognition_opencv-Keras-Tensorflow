@@ -25,4 +25,5 @@ faceData：存放脸部图片
 1. 运行face_capture.py,拍摄脸部照片 ，记得把main函数中的人名改成的你的
 2. 运行model_train.py，训练模型
 3. camera_reader.py 识别人脸的入口
+
 **建议开始是你把faceData图片删除掉，否则会影响识别的准确度**
